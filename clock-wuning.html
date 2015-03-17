@@ -1,0 +1,124 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CLOCK</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		ul,li{
+			list-style: none;
+		}
+		@-webkit-keyframes wobble {
+			0% {
+				 background-image: radial-gradient(circle at center,red,orange);
+			}
+			25% {
+				 background-image: radial-gradient(circle at center,orange,yellow);
+			}
+			50% {
+				 background-image: radial-gradient(circle at center,yellow,green);
+			}
+			75% {
+				background-image: radial-gradient(circle at center,green,rgb(0,0,75));
+			}
+			100% {
+				background-image: radial-gradient(circle at center,rgb(220,75,200),rgb(0,0,75));
+			}
+		}
+		.wrap{
+			width: 200px;
+			height: 200px;
+			border: 3px solid #000000;
+		    /*background-image: radial-gradient(circle at center,rgb(220,75,200),rgb(0,0,75));*/
+		    -webkit-animation:wobble 25s ease-out;
+		    animation:wobble  25s ease-out;
+		    animation-iteration-count:infinite;
+		    -webkit-animation-iteration-count:infinite;
+		    border-radius: 100%;
+		    position: relative;
+		    box-shadow: 0 1px 8px #666;
+		}
+		.point li{
+			position: absolute;
+			width: 20px;
+			height: 2px;
+			background-color: #000000;
+			top: 50%;
+			left: 50%;
+			-webkit-transform-origin: left center;
+		}
+		.guide li{
+			position: absolute;
+			top: 50%;
+			left:50%;
+			height: 2px;
+			background:#ffffff;
+			-webkit-transform-origin: left center;
+		}
+		.guide li.hour {
+			 width: 50px;
+		}
+		.guide li.min {
+			 width: 80px;
+		}
+		.guide li.sec {
+			 width: 100px;
+		}
+		.guide li.scr {
+			width: 10px;
+			height: 10px;
+			border-radius: 100%;
+			margin-top: -5px;
+			margin-left: -5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<ul class="point">	
+		</ul>
+		<ul class="guide">
+			<li class="hour"></li>
+			<li class="min"></li>
+			<li class="sec"></li>
+			<li class="scr"></li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript" src="https://ss0.bdstatic.com/5a21bjqh_Q23odCf/static/superplus/js/lib/jquery-1.10.2_d88366fd.js"></script>
+<script>
+	$(function(){
+		function init(){
+			for(var i=0; i<12; i++){
+				$(".point").append("<li style='-webkit-transform:rotateZ("+(i*30)+"deg) translateX(75px)'></li>");
+			}
+			move();
+		}
+		function move(){
+			var hour = $(".hour");
+			var min = $(".min");
+			var sec = $(".sec");
+			setInterval(function(){
+				var time = new Date();
+				var nowhour = time.getHours();
+				var nowmin = time.getMinutes();
+				var nowsec = time.getSeconds();
+				var secdeg = nowsec * 6 - 90;
+				var mindeg = nowmin * 6 + (nowsec/60)*6 - 90;
+				var hourdeg = nowhour * 30 + (nowmin/60)*6 -90;
+
+
+				var srotate = 'rotateZ(' + secdeg + 'deg)';
+				var mrotate = 'rotateZ(' + mindeg + 'deg)';
+				var hrotate = 'rotateZ(' + hourdeg + 'deg)';
+				$(".hour").css("-webkit-transform",hrotate);
+				$(".min").css("-webkit-transform",mrotate);
+				$(".sec").css("-webkit-transform",srotate);
+			},1000);
+		}
+		init();
+	});
+</script>
+</html>
