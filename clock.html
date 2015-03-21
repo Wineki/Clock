@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>clock</title>
+	<title></title>
 	<style type="text/css">
 		*{
 			margin: 0;
@@ -10,112 +10,167 @@
 		ul,li{
 			list-style: none;
 		}
-		.mh-clock-bg{
+		.wrap{
+			position: relative;
 			width: 200px;
 			height: 200px;
+			border: 8px solid #333;
 			border-radius: 100%;
-			background: #333;
-			position: relative;
+			background-color: #292a38;
 		}
-		.mh-lines li{
+		.line-hour li{
 			position: absolute;
-			left: 50%;
-			top: 50%;
-			width: 20px;
+			width: 10px;
 			height: 2px;
-			background: red;
-			-webkit-transform-origin: left center;
-			
-		}
-		.mh-pointer li{
-			position: absolute;
 			left: 50%;
 			top: 50%;
-			background: green;
-			-webkit-transform-origin: left center;
+			background-color: #ffffff;
+			transform-origin: left center;
 		}
-		.mh-pointer .mh-hour{
-			width: 40px;
-			height: 4px;
-			margin-top: -2px;
+		.line-min li{
+			position: absolute;
+			width: 5px;
+			height: 2px;
+			left: 50%;
+			top: 50%;
+			background-color: #ffffff;
+			transform-origin: left center;
 		}
-		.mh-pointer .mh-min{
+		.number{
+			position: absolute;
+			height: 150px;
+			width: 150px;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			font-family: 'Microsoft Yahei';
+			font-size: 15px;
+			color: #fff;
+		}
+		.number li{
+			position: absolute;
+			transform: translate(-50%, -50%);
+
+		}
+		.pointer li{
+			position: absolute;
+			top: 50%;
+			left:50%;
+			background:#ffffff;
+			transform-origin: left center;
+		}
+		.pointer li.hour {
+			width: 45px;
+			height: 2px;
+			margin-top: -1px;
+		}
+		.pointer li.min {
 			width: 60px;
-			height: 3px;
+			height: 1.5px;
+			margin-top: -1px;
 		}
-		.mh-pointer .mh-sec{
-			width: 70px;
-			height: 2px;
+		.pointer li.sec {
+			width: 80px;
+			height: 1px;
+			margin-top: -1px;
 		}
-		.mh-pointer .mh-cir{
+		.pointer li.circle {
 			width: 10px;
 			height: 10px;
 			border-radius: 100%;
-			margin-left: -5px;
 			margin-top: -5px;
+			margin-left: -5px;
 		}
 		
 	</style>
 </head>
 <body>
-	<div class="mh-clock-bg">
-		<ul class="mh-lines">
-			<li style="-webkit-transform:rotateZ(0deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(30deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(60deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(90deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(120deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(150deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(180deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(210deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(240deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(270deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(300deg) translateX(75px)"></li>
-			<li style="-webkit-transform:rotateZ(330deg) translateX(75px)"></li>
-		</ul>
-		<ul class="mh-pointer">
-			<li class="mh-hour"></li>
-			<li class="mh-min"></li>
-			<li class="mh-sec"></li>
-			<li class="mh-cir"></li>
+	<div class="wrap">
+		<ul class="line-hour"></ul>
+		<ul class="line-min"></ul>
+		<ul class="number"></ul>
+		<ul class="pointer">
+			<li class="hour"></li>
+			<li class="min"></li>
+			<li class="sec"></li>
+			<li class="circle"></li>
 		</ul>
 	</div>
 </body>
-<script type="text/javascript" src="http://s8.qhimg.com/static/5d0cb4bd42d5cb6e/zepto_1.1.2.js"></script>
+<script type="text/javascript" src="https://ss0.bdstatic.com/5a21bjqh_Q23odCf/static/superplus/js/lib/jquery-1.10.2_d88366fd.js"></script>
 <script>
+	$(function(){
+		/*初始化函数*/
+		function init(){
+			showLines(12,30,$(".line-hour"),85);
+			showLines(60,6,$(".line-min"),90);
+			showNumber($('.number'));
+			move();
+		}
 
-	function clock(){
-		var hour = $('.mh-hour'),
-			min = $('.mh-min'),
-			sec = $('.mh-sec');
+		/*
+		 * 展示钟表刻度
+		 * @param sum为刻度总个数
+		 * @param deg为相邻两刻度之间的角度
+		 * @param wrap为刻度元素外层包裹节点
+		 */
+		function showLines(sum,deg,wrap,len){
+			var strHtml = '';
+			for(var i = 0; i < sum; i++){
+				strHtml += "<li style='transform:rotateZ("+(i*deg)+"deg) translate("+len+"px,-50%)'></li>";
+			}
+			wrap.append(strHtml);
+		}
 
-		var time,nHour,nMinutes,nSeconds,srotate,mrotate,hrotate,sdegree,mdegree,hdegree;
-		setInterval(function(){
-			time = new Date();
-			//console.log(time);
-			nHour = time.getHours();
-			nMinutes = time.getMinutes();
-			nSeconds = time.getSeconds();
-			//每格表示的度数为360/60=6度
-			sdegree = nSeconds * 6 - 90;
-			mdegree = nMinutes * 6 + (nSeconds/60)*6 - 90;
-	
-			//时针的度数应该为当前时间的小时数+与分针对应的小时度数
-			//(nHour%12) * 30 == (nHour%12) * (360/12)
-			//nMinutes/2 == (nMinutes/60)*5*6 这里的(nMinutes/60)*5表示的是与分针对应的小时刻度，然后每格的度数6
-			hdegree = (nHour%12) * 30 + Math.floor((nMinutes/60)*30) - 90;
-			
-			srotate = 'rotateZ(' + sdegree + 'deg)';
-			mrotate = 'rotateZ(' + mdegree + 'deg)';
-			hrotate = 'rotateZ(' + hdegree + 'deg)';
-			//console.log(srotate);
-			sec.css("-webkit-transform",srotate);
-			min.css("-webkit-transform",mrotate);
-			hour.css("-webkit-transform",hrotate);
-			document.title = nHour + ':' + nMinutes + ':' + nSeconds;
-		},1000);	
-	}
-	clock();
+		/* 展示钟表刻度数字
+		 * @param wrap为刻度元素外层包裹节点
+		 */
+		function showNumber(wrap){
+			var start = -60,
+				end = 300;
+
+			var radius = wrap.width() / 2,
+				gap = 360 / 12,
+				radian = Math.PI / 180;
+
+			var strHtml = '';
+			for(var i = 0; i < 12; i++){
+				var myAngle = ( start + gap * i ) * radian;
+
+				var myX = radius + radius * Math.cos(myAngle),
+					myY = radius + radius * Math.sin(myAngle);
+
+				strHtml += '<li style="left:' + myX + 'px; top:'+ myY +'px">' + (i+1) + '</li>';
+			}
+			wrap.html(strHtml);
+		}
+
+		/*移动钟表的时针，分针，秒针*/
+		function move(){
+			var domHour = $(".hour"),
+			    domMin = $(".min"),
+			    domSec = $(".sec");
+
+			setInterval(function(){
+				var now = new Date(),
+					hour = now.getHours(),
+				    min = now.getMinutes(),
+				    sec = now.getSeconds();
+
+				var secDeg = sec * 6 - 90,
+				    minDeg = min * 6 + ( sec/60 ) * 6 - 90,
+				    hourDeg = hour * 30 + ( min/60 ) * 6 - 90;
+
+				domHour.css("transform",'rotateZ(' + hourDeg + 'deg)');
+				domMin.css("transform",'rotateZ(' + minDeg + 'deg)');
+				domSec.css("transform",'rotateZ(' + secDeg + 'deg)');
+
+				document.title = hour + ':' + min + ':' + sec;
+			},1000);
+		}
+		
+		init();
+		
+	});
 </script>
 </html>
-  
